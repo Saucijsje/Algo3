@@ -80,6 +80,10 @@ class Veld
     // * Alle vakjes in parameter route liggen in dit veld.
     void drukAfRoute (vector< pair<int,int> > &route);
 
+    void bepaalOptimaalBoeketRec2 (int x, int y);
+
+    void leegMogelijkheden ();
+
   private:
     int hoogte, breedte,   // hoogte en breedte van veld (h en b dus)
         veld[MaxDim][MaxDim];  // coordinaten van vakken in het veld lopen
@@ -87,7 +91,7 @@ class Veld
     bool mogelijk[MaxDim][MaxDim][MaxBoeket+1];
       // [i][j][k]: is het mogelijk om vanaf vakje (0,0) op vakje (i,j)
       //   te arriveren met een boeket overeenkomend met getal (bitstring) k
-    bool veldIngelezen;
+    bool veldIngelezen; // wordt true zodra er een spel is ingelezen
 };  // class Veld
 
 #endif
