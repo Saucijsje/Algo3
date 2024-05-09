@@ -71,6 +71,7 @@ bool Veld::bepaalOptimaalBoeketRec (int &optBoeket, int &optBits)
   if (veldIngelezen) {
     optBoeket = -1;
     optBits = -1;
+    maxBoeketGevonden = false;
     bepaalOptimaalBoeketRec2(hoogte - 1, breedte - 1);
     for (int i = 0; i <= 255; i++) {
       int teller = 0;
@@ -95,31 +96,36 @@ bool Veld::bepaalOptimaalBoeketRec (int &optBoeket, int &optBits)
 
 void Veld::bepaalOptimaalBoeketRec2 (int x, int y)
 {
-  int nieuwBoeket;
-  if (x != 0) {
-    bepaalOptimaalBoeketRec2 (x - 1, y);
-    for (int i = 0; i <= 255; i++) {
-      if (mogelijk[x - 1][y][i]) {
-        nieuwBoeket = i;
-        switchBit(nieuwBoeket, veld[x][y]);
-        mogelijk[x][y][nieuwBoeket] = true;
+  if (!maxBoeketGevonden) {
+    int nieuwBoeket;
+    if (x != 0) {
+      bepaalOptimaalBoeketRec2 (x - 1, y);
+      for (int i = 0; i <= 255; i++) {
+        if (mogelijk[x - 1][y][i]) {
+          nieuwBoeket = i;
+          switchBit(nieuwBoeket, veld[x][y]);
+          mogelijk[x][y][nieuwBoeket] = true;
+        }
       }
     }
-  }
-  if (y != 0) {
-    bepaalOptimaalBoeketRec2 (x, y - 1);
-    for (int i = 0; i <= 255; i++) {
-      if (mogelijk[x][y - 1][i]) {
-        nieuwBoeket = i;
-        switchBit(nieuwBoeket, veld[x][y]);
-        mogelijk[x][y][nieuwBoeket] = true;
+    if (y != 0) {
+      bepaalOptimaalBoeketRec2 (x, y - 1);
+      for (int i = 0; i <= 255; i++) {
+        if (mogelijk[x][y - 1][i]) {
+          nieuwBoeket = i;
+          switchBit(nieuwBoeket, veld[x][y]);
+          mogelijk[x][y][nieuwBoeket] = true;
+        }
       }
     }
-  }
-  if (x == 0 && y == 0) {
-    nieuwBoeket = 0;
-    switchBit(nieuwBoeket, veld[x][y]);
-    mogelijk[x][y][nieuwBoeket] = true;
+    if (x == 0 && y == 0) {
+      nieuwBoeket = 0;
+      switchBit(nieuwBoeket, veld[x][y]);
+      mogelijk[x][y][nieuwBoeket] = true;
+    }
+    if (mogelijk[hoogte - 1][breedte - 1][255]) {
+      maxBoeketGevonden = true;
+    }
   }
 } // bepaalOptimaalBoeketRec2
 
@@ -157,7 +163,7 @@ void Veld::leegMogelijkheden ()
 {
   for (int i = 0; i < hoogte; i++) {
     for (int j = 0; j < breedte; j++) {
-      for (int k = 0; k <= 7; k++) {
+      for (int k = 0; k <= 255; k++) {
         mogelijk[i][j][k] = false;
       }
     }

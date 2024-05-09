@@ -92,6 +92,7 @@ class Veld
       // [i][j][k]: is het mogelijk om vanaf vakje (0,0) op vakje (i,j)
       //   te arriveren met een boeket overeenkomend met getal (bitstring) k
     bool veldIngelezen; // wordt true zodra er een spel is ingelezen
+    bool maxBoeketGevonden;
 };  // class Veld
 
 #endif
