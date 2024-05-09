@@ -133,10 +133,74 @@ void Veld::bepaalOptimaalBoeketRec2 (int x, int y)
 
 bool Veld::bepaalOptimaalBoeketTD (int &optBoeket, int &optBits)
 {
-  // TODO: implementeer deze memberfunctie
+  if (veldIngelezen) {
+    optBoeket = -1;
+    optBits = -1;
+    maxBoeketGevonden = false;
+    for (int i = 0; i < hoogte; i++) {
+      for (int j = 0; j < breedte; j++) {
+        vakjeBekekenTD[i][j] = false;
+      }
+    }
+    bepaalOptimaalBoeketTD2(hoogte - 1, breedte - 1);
+    for (int i = 0; i <= 255; i++) {
+      int teller = 0;
+      if (mogelijk[hoogte - 1][breedte - 1][i]) {
+        for (int j = 0; j <= 7; j++) {
+          if (getBit(i,j)) {
+            teller++;
+          }
+        }
+      }
+      if (teller > optBits) {
+        optBits = teller;
+        optBoeket = i;
+      }
+    }
+    return true;
+  }
   return false;
-
 }  // bepaalOptimaalBoeketTD
+
+//****************************************************************************
+
+void Veld::bepaalOptimaalBoeketTD2 (int x, int y)
+{
+  if (!maxBoeketGevonden) {
+    if (!vakjeBekekenTD[x][y]) {
+      int nieuwBoeket;
+      if (x != 0) {
+        bepaalOptimaalBoeketTD2 (x - 1, y);
+        for (int i = 0; i <= 255; i++) {
+          if (mogelijk[x - 1][y][i]) {
+            nieuwBoeket = i;
+            switchBit(nieuwBoeket, veld[x][y]);
+            mogelijk[x][y][nieuwBoeket] = true;
+          }
+        }
+      }
+      if (y != 0) {
+        bepaalOptimaalBoeketTD2 (x, y - 1);
+        for (int i = 0; i <= 255; i++) {
+          if (mogelijk[x][y - 1][i]) {
+            nieuwBoeket = i;
+            switchBit(nieuwBoeket, veld[x][y]);
+            mogelijk[x][y][nieuwBoeket] = true;
+          }
+        }
+      }
+      if (x == 0 && y == 0) {
+        nieuwBoeket = 0;
+        switchBit(nieuwBoeket, veld[x][y]);
+        mogelijk[x][y][nieuwBoeket] = true;
+      }
+      if (mogelijk[hoogte - 1][breedte - 1][255]) {
+        maxBoeketGevonden = true;
+      }
+      vakjeBekekenTD[x][y] = true;
+    }
+  }
+} // bepaalOptimaalBoeketTD2
 
 //****************************************************************************
 
