@@ -80,9 +80,7 @@ class Veld
     // * Alle vakjes in parameter route liggen in dit veld.
     void drukAfRoute (vector< pair<int,int> > &route);
 
-    void bepaalOptimaalBoeketRec2 (int x, int y);
-
-    void bepaalOptimaalBoeketTD2 (int x, int y);
+    void recursiefHulp (int x, int y, bool TD);
 
     void leegMogelijkheden ();
 

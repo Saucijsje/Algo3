@@ -72,7 +72,8 @@ bool Veld::bepaalOptimaalBoeketRec (int &optBoeket, int &optBits)
     optBoeket = -1;
     optBits = -1;
     maxBoeketGevonden = false;
-    bepaalOptimaalBoeketRec2(hoogte - 1, breedte - 1);
+    bool TD = false;
+    recursiefHulp(hoogte - 1, breedte - 1, TD);
     for (int i = 0; i <= 255; i++) {
       int teller = 0;
       if (mogelijk[hoogte - 1][breedte - 1][i]) {
@@ -94,55 +95,19 @@ bool Veld::bepaalOptimaalBoeketRec (int &optBoeket, int &optBits)
 
 //****************************************************************************
 
-void Veld::bepaalOptimaalBoeketRec2 (int x, int y)
-{
-  if (!maxBoeketGevonden) {
-    int nieuwBoeket;
-    if (x != 0) {
-      bepaalOptimaalBoeketRec2 (x - 1, y);
-      for (int i = 0; i <= 255; i++) {
-        if (mogelijk[x - 1][y][i]) {
-          nieuwBoeket = i;
-          switchBit(nieuwBoeket, veld[x][y]);
-          mogelijk[x][y][nieuwBoeket] = true;
-        }
-      }
-    }
-    if (y != 0) {
-      bepaalOptimaalBoeketRec2 (x, y - 1);
-      for (int i = 0; i <= 255; i++) {
-        if (mogelijk[x][y - 1][i]) {
-          nieuwBoeket = i;
-          switchBit(nieuwBoeket, veld[x][y]);
-          mogelijk[x][y][nieuwBoeket] = true;
-        }
-      }
-    }
-    if (x == 0 && y == 0) {
-      nieuwBoeket = 0;
-      switchBit(nieuwBoeket, veld[x][y]);
-      mogelijk[x][y][nieuwBoeket] = true;
-    }
-    if (mogelijk[hoogte - 1][breedte - 1][255]) {
-      maxBoeketGevonden = true;
-    }
-  }
-} // bepaalOptimaalBoeketRec2
-
-//****************************************************************************
-
 bool Veld::bepaalOptimaalBoeketTD (int &optBoeket, int &optBits)
 {
   if (veldIngelezen) {
     optBoeket = -1;
     optBits = -1;
     maxBoeketGevonden = false;
+    bool TD = true;
     for (int i = 0; i < hoogte; i++) {
       for (int j = 0; j < breedte; j++) {
         vakjeBekekenTD[i][j] = false;
       }
     }
-    bepaalOptimaalBoeketTD2(hoogte - 1, breedte - 1);
+    recursiefHulp(hoogte - 1, breedte - 1, TD);
     for (int i = 0; i <= 255; i++) {
       int teller = 0;
       if (mogelijk[hoogte - 1][breedte - 1][i]) {
@@ -164,13 +129,13 @@ bool Veld::bepaalOptimaalBoeketTD (int &optBoeket, int &optBits)
 
 //****************************************************************************
 
-void Veld::bepaalOptimaalBoeketTD2 (int x, int y)
+void Veld::recursiefHulp (int x, int y, bool TD)
 {
   if (!maxBoeketGevonden) {
-    if (!vakjeBekekenTD[x][y]) {
+    if (!TD || !vakjeBekekenTD[x][y]) {
       int nieuwBoeket;
       if (x != 0) {
-        bepaalOptimaalBoeketTD2 (x - 1, y);
+        recursiefHulp (x - 1, y, TD);
         for (int i = 0; i <= 255; i++) {
           if (mogelijk[x - 1][y][i]) {
             nieuwBoeket = i;
@@ -180,7 +145,7 @@ void Veld::bepaalOptimaalBoeketTD2 (int x, int y)
         }
       }
       if (y != 0) {
-        bepaalOptimaalBoeketTD2 (x, y - 1);
+        recursiefHulp (x, y - 1, TD);
         for (int i = 0; i <= 255; i++) {
           if (mogelijk[x][y - 1][i]) {
             nieuwBoeket = i;
@@ -197,7 +162,9 @@ void Veld::bepaalOptimaalBoeketTD2 (int x, int y)
       if (mogelijk[hoogte - 1][breedte - 1][255]) {
         maxBoeketGevonden = true;
       }
-      vakjeBekekenTD[x][y] = true;
+      if (TD) {
+        vakjeBekekenTD[x][y] = true;
+      }
     }
   }
 } // bepaalOptimaalBoeketTD2
