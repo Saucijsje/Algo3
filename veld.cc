@@ -13,7 +13,7 @@ using namespace std;
 
 Veld::Veld ()
 {
-  // TODO: implementeer zo nodig deze constructor
+  veldIngelezen = false;
 
 }  // constructor
 
@@ -21,17 +21,47 @@ Veld::Veld ()
 
 bool Veld::leesInVeld (const char *invoernaam)
 {
-  // TODO: implementeer deze memberfunctie
-  return false;
-
+  int getal;
+  ifstream mijnfile;
+  mijnfile.open(invoernaam);
+  if (!mijnfile.is_open()) {
+   cout << "Bestand openen niet gelukt." << endl;
+   return false;
+  }
+  mijnfile >> getal;
+  hoogte = getal;
+  mijnfile >> getal;
+  breedte = getal;
+  if (!integerInBereik("hoogte",hoogte,1,100) || 
+      !integerInBereik("breedte",breedte,1,100)) {
+    return false;
+  }
+  for (int i = 0; i < hoogte; i++) {
+    for (int j = 0; j < breedte; j++) {
+      mijnfile >> getal;
+      if (!integerInBereik("getal",getal,0,7)) {
+        return false;
+      }
+      veld[i][j] = getal;
+    }
+  }
+  veldIngelezen = true;
+  return true;
 }  // leesInVeld
 
 //****************************************************************************
 
 void Veld::drukAfVeld ()
 {
-  // TODO: implementeer deze memberfunctie
-
+  if (veldIngelezen) {
+    cout << endl << "Het bloemenveld: " << endl << endl;
+    for (int i = 0; i < hoogte; i++) {
+      for (int j = 0; j < breedte; j++) {
+        cout << veld[i][j] << " ";
+      }
+      cout << endl;
+    }
+  }
 }  // drukAfVeld
 
 //****************************************************************************

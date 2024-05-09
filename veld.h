@@ -87,9 +87,7 @@ class Veld
     bool mogelijk[MaxDim][MaxDim][MaxBoeket+1];
       // [i][j][k]: is het mogelijk om vanaf vakje (0,0) op vakje (i,j)
       //   te arriveren met een boeket overeenkomend met getal (bitstring) k
-
-    // TODO: uw eigen private memberfuncties en -variabelen
-
+    bool veldIngelezen;
 };  // class Veld
 
 #endif
