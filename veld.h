@@ -84,6 +84,9 @@ class Veld
 
     void leegMogelijkheden ();
 
+    void besteBoeket(int &optBoeket, int &optBits);
+
+
   private:
     int hoogte, breedte,   // hoogte en breedte van veld (h en b dus)
         veld[MaxDim][MaxDim];  // coordinaten van vakken in het veld lopen

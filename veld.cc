@@ -74,20 +74,7 @@ bool Veld::bepaalOptimaalBoeketRec (int &optBoeket, int &optBits)
     maxBoeketGevonden = false;
     bool TD = false;
     recursiefHulp(hoogte - 1, breedte - 1, TD);
-    for (int i = 0; i <= 255; i++) {
-      int teller = 0;
-      if (mogelijk[hoogte - 1][breedte - 1][i]) {
-        for (int j = 0; j <= 7; j++) {
-          if (getBit(i,j)) {
-            teller++;
-          }
-        }
-      }
-      if (teller > optBits) {
-        optBits = teller;
-        optBoeket = i;
-      }
-    }
+    besteBoeket(optBoeket,optBits);
     return true;
   }
   return false;
@@ -108,20 +95,7 @@ bool Veld::bepaalOptimaalBoeketTD (int &optBoeket, int &optBits)
       }
     }
     recursiefHulp(hoogte - 1, breedte - 1, TD);
-    for (int i = 0; i <= 255; i++) {
-      int teller = 0;
-      if (mogelijk[hoogte - 1][breedte - 1][i]) {
-        for (int j = 0; j <= 7; j++) {
-          if (getBit(i,j)) {
-            teller++;
-          }
-        }
-      }
-      if (teller > optBits) {
-        optBits = teller;
-        optBoeket = i;
-      }
-    }
+    besteBoeket(optBoeket,optBits);
     return true;
   }
   return false;
@@ -187,12 +161,33 @@ bool Veld::bepaalOptimaalBoeketBU (int &optBoeket, int &optBits,
         kolom = breedte - 1;
         rij = i - breedte + 1;
       }
-      cout << rij << " " << kolom << endl;
+      while (rij != hoogte && kolom != -1) {
+        if (rij != 0) {
+          for (int j = 0; j <= 255; j++) {
+            if (mogelijk[rij - 1][kolom][j]) {
+              nieuwBoeket = j;
+              switchBit(nieuwBoeket,veld[rij][kolom]);
+              mogelijk[rij][kolom][nieuwBoeket] = true;
+            }
+          }
+        }
+        if (kolom != 0) {
+          for (int j = 0; j <= 255; j++) {
+            if (mogelijk[rij][kolom - 1][j]) {
+              nieuwBoeket = j;
+              switchBit(nieuwBoeket,veld[rij][kolom]);
+              mogelijk[rij][kolom][nieuwBoeket] = true;
+            }
+          }
+        }
+        rij++;
+        kolom--;
+      }
     }
+    besteBoeket(optBoeket,optBits);
     return true;
   }
   return false;
-
 }  // bepaalOptimaalBoeketBU
 
 //****************************************************************************
@@ -213,6 +208,26 @@ void Veld::leegMogelijkheden ()
       for (int k = 0; k <= 255; k++) {
         mogelijk[i][j][k] = false;
       }
+    }
+  }
+}
+
+//****************************************************************************
+
+void Veld::besteBoeket(int &optBoeket, int &optBits)
+{
+  for (int i = 0; i <= 255; i++) {
+    int teller = 0;
+    if (mogelijk[hoogte - 1][breedte - 1][i]) {
+      for (int j = 0; j <= 7; j++) {
+        if (getBit(i,j)) {
+          teller++;
+        }
+      }
+    }
+    if (teller > optBits) {
+      optBits = teller;
+      optBoeket = i;
     }
   }
 }
