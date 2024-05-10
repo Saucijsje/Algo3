@@ -174,7 +174,23 @@ void Veld::recursiefHulp (int x, int y, bool TD)
 bool Veld::bepaalOptimaalBoeketBU (int &optBoeket, int &optBits,
                                  vector< pair<int,int> > &route)
 {
-  // TODO: implementeer deze memberfunctie
+  if (veldIngelezen) {
+    optBoeket = -1;
+    optBits = -1;
+    int nieuwBoeket = 0;
+    switchBit(nieuwBoeket,veld[0][0]);
+    mogelijk[0][0][nieuwBoeket] = true;
+    for (int i = 1; i < breedte + hoogte - 1; i++) {
+      int kolom = i;
+      int rij = 0;
+      if (kolom >= breedte) {
+        kolom = breedte - 1;
+        rij = i - breedte + 1;
+      }
+      cout << rij << " " << kolom << endl;
+    }
+    return true;
+  }
   return false;
 
 }  // bepaalOptimaalBoeketBU
