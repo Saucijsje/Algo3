@@ -98,7 +98,8 @@ class Veld
       //   te arriveren met een boeket overeenkomend met getal (bitstring) k
     bool veldIngelezen; // wordt true zodra er een spel is ingelezen
     bool maxBoeketGevonden; // we stoppen met zoeken bij een maximaal boeket
-    bool vakjeBekekenTD[MaxDim][MaxDim];
+    bool vakjeBekekenTD[MaxDim][MaxDim]; // voor topdown houden we
+                                         // deeloplossingen bij
 
 };  // class Veld
 
