@@ -149,6 +149,7 @@ bool Veld::bepaalOptimaalBoeketBU (int &optBoeket, int &optBits,
                                  vector< pair<int,int> > &route)
 {
   if (veldIngelezen) {
+    route.clear();
     optBoeket = -1;
     optBits = -1;
     int nieuwBoeket = 0;
@@ -186,12 +187,7 @@ bool Veld::bepaalOptimaalBoeketBU (int &optBoeket, int &optBits,
     }
     besteBoeket(optBoeket,optBits);
     int temp = optBoeket;
-    hulpRoute.push_back(make_pair(hoogte - 1, breedte - 1));
-    bepaalRoute(temp,hoogte - 1, breedte - 1);
-    for (int i = hulpRoute.size() - 1; i >= 0; i--) {
-      cout << i << endl;
-      route.push_back(hulpRoute[i]);
-    }
+    bepaalRoute(temp,hoogte - 1, breedte - 1,route);
     return true;
   }
   return false;
@@ -201,10 +197,28 @@ bool Veld::bepaalOptimaalBoeketBU (int &optBoeket, int &optBits,
 
 void Veld::drukAfRoute (vector< pair<int,int> > &route)
 {
+  cout << endl << "Tabel met coördinaten:" << endl << endl;
   int boeket = 0;
   for (int i = 0; i < route.size(); i++) {
     switchBit(boeket,veld[route[i].first][route[i].second]);
     cout << route[i].first << " " << route[i].second << " " << boeket << endl;
+  }
+  cout << endl << "Route gevisualiseerd:" << endl << endl;
+  for (int i = 0; i < hoogte; i++) {
+    for (int j = 0; j < breedte; j++) {
+      bool vakjeOpRoute = false;
+      for (int k = 0; k < route.size(); k++) {
+        if (route[k].first == i && route[k].second == j) {
+          vakjeOpRoute = true;
+        }
+      }
+      if (vakjeOpRoute) {
+        cout << veld[i][j] << " ";
+      } else {
+        cout << "  ";
+      }
+    }
+    cout << endl;
   }
 }  // drukAfRoute
 
@@ -243,17 +257,17 @@ void Veld::besteBoeket(int &optBoeket, int &optBits)
 
 //****************************************************************************
 
-bool Veld::bepaalRoute(int &boeket, int rij, int kolom) 
+bool Veld::bepaalRoute(int boeket, int rij, int kolom,
+                      vector< pair<int,int> > &route) 
 {
-  cout << hulpRoute.size() << "a" << endl;
   int nieuwBoeket;
   if (rij == 0 && kolom == 0) {
     nieuwBoeket = boeket;
     switchBit(nieuwBoeket,veld[rij][kolom]);
-    if (boeket == 0) {
+    if (nieuwBoeket == 0) {
+      route.push_back(make_pair(rij, kolom));
       return true;
     } else {
-      switchBit(nieuwBoeket,veld[rij][kolom]);
       return false;
     }
   }
@@ -261,28 +275,21 @@ bool Veld::bepaalRoute(int &boeket, int rij, int kolom)
     nieuwBoeket = boeket;
     switchBit(nieuwBoeket,veld[rij][kolom]);
     if (mogelijk[rij - 1][kolom][nieuwBoeket]) {
-      hulpRoute.push_back(make_pair(rij - 1, kolom));
-      if (bepaalRoute(nieuwBoeket, rij - 1, kolom)) {
+      if (bepaalRoute(nieuwBoeket, rij - 1, kolom, route)) {
+        route.push_back(make_pair(rij, kolom));
         return true;
-      } else {
-        hulpRoute.pop_back();
-        switchBit(nieuwBoeket,veld[rij][kolom]);
-      }
+      } 
     }
   }
   if (kolom != 0) {
     nieuwBoeket = boeket;
     switchBit(nieuwBoeket,veld[rij][kolom]);
     if (mogelijk[rij][kolom - 1][nieuwBoeket]) {
-      hulpRoute.push_back(make_pair(rij, kolom - 1));
-      if (bepaalRoute(nieuwBoeket, rij, kolom - 1)) {
+      if (bepaalRoute(nieuwBoeket, rij, kolom - 1, route)) {
+        route.push_back(make_pair(rij, kolom));
         return true;
-      } else {
-        hulpRoute.pop_back();
-        switchBit(nieuwBoeket,veld[rij][kolom]);
-      }
+      } 
     }
   }
-  cout << hulpRoute.size() << "b" << endl;
   return false;
 }
