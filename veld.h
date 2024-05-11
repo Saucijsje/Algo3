@@ -104,4 +104,3 @@ class Veld
 };  // class Veld
 
 #endif
-
