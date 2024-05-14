@@ -10,14 +10,21 @@
 using namespace std;
 
 //****************************************************************************
-
+/*Zodra er een file ingelezen is wordt boolean veldIngezen true, daarvoor
+staat hij op false.*/
 Veld::Veld ()
 {
   veldIngelezen = false;
 }  // constructor
 
 //****************************************************************************
-
+/*De meegegeven filenaam wordt geopend in de variabele mijnfile. Als het niet
+lukt om hem te openen geven we een foutmelding. Als het wel lukt worden de 
+eerste twee getallen opgeslagen in de variabelen hoogte en breedte en er
+wordt meteen gecontroleerd of deze wel binnen de dimensies vallen (1-100).
+Als dit zo is wordt het veld ingelezen in de variabele veld[maxDim][maxDim] en
+wordt er per bloemnummer gecontroleerd of deze binnen de dimensies valt (0-7).
+Als alles klopt wordt de boolean veldIngelezen op true gezet.*/
 bool Veld::leesInVeld (const char *invoernaam)
 {
   int getal;
@@ -185,9 +192,8 @@ bool Veld::bepaalOptimaalBoeketBU (int &optBoeket, int &optBits,
         kolom--;
       }
     }
-    besteBoeket(optBoeket,optBits);
-    int temp = optBoeket;
-    bepaalRoute(temp,hoogte - 1, breedte - 1,route);
+    besteBoeket(optBoeket, optBits);
+    bepaalRoute(optBoeket, hoogte - 1, breedte - 1,route);
     return true;
   }
   return false;
