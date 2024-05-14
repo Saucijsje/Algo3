@@ -86,7 +86,7 @@ class Veld
 
     void besteBoeket(int &optBoeket, int &optBits);
 
-    bool bepaalRoute(int boeket, int rij, int kolom, 
+    void bepaalRoute(int boeket, int rij, int kolom, 
                             vector< pair<int,int> > &route);
 
   private:
@@ -100,7 +100,7 @@ class Veld
     bool maxBoeketGevonden; // we stoppen met zoeken bij een maximaal boeket
     bool vakjeBekekenTD[MaxDim][MaxDim]; // voor topdown houden we
                                          // deeloplossingen bij
-
+    bool routeGevonden; // true als een optimale route is gevonden
 };  // class Veld
 
 #endif

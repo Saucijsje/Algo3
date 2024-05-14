@@ -242,6 +242,7 @@ bool Veld::bepaalOptimaalBoeketBU (int &optBoeket, int &optBits,
       }
     }
     besteBoeket(optBoeket, optBits);
+    routeGevonden = false;
     bepaalRoute(optBoeket, hoogte - 1, breedte - 1, route);
     return true;
   }
@@ -321,56 +322,38 @@ void Veld::besteBoeket(int &optBoeket, int &optBits)
 //****************************************************************************
 /*We bepalen recursief de optimale route, beginnend bij het laatste vakje.
 In de parameter boeket staat het boeket waarmee we eigenlijk teruglopen door 
-het veld. Deze begint op het optimale boeket, en we willen teruglopen door het
-veld, steeds een vakje zoekend dat een boeket kan bevatten als we de bloem
-weg zouden halen van het vakje waar we terug van lopen, en we willen dat boe-
-ket 0 is als we bij het beginvakje zijn aangekomen. We kijken in principe dus
-steeds naar de buur boven ons en veranderen ons boeket door de bloem in het
-huidige vakje weg te halen (te wisselen), en als deze buur true retourneert
-slaan we de coördinaten op in route. De truc is dat deze buur alleen true kan
-retourneren als zijn buur ook weer true retourneert, en zo gaat dat door tot
-we bij het beginvakje zijn. Die retourneert true als het boeket vervolgens 0
-is, en in een rits geven alle recursief aangeroepen functies true door aan
-elkaar, en slaan de coördinaten op. Als het beginvakje false had doorgegeven
-omdat het boeket niet uitkwam, was er in een rits false doorgegeven en wordt
-de andere buur gecheckt. Als die ook false geeft kan dat hele vakje dus niet
-op de route liggen en geeft dat hele vakje false terug aan het vakje daar-
-voor. Die checkt dan weer de andere buur of geeft false door etc. etc. maar
-we weten gelukkig dat er wel een route moet zijn, dus ergens moet er een reeks
-aan true's zijn.*/
-bool Veld::bepaalRoute(int boeket, int rij, int kolom,
+het veld. Deze begint op het optimale boeket, en we willen teruglopen, 
+steeds een vakje zoekend dat een boeket kan bevatten als we de bloem weg 
+zouden halen van het vakje waar we terug van lopen. We kijken in principe dus
+steeds naar de buren voor ons en veranderen ons boeket door de bloem in het
+huidige vakje weg te halen (te wisselen), en als de buur dat boeket bevat
+slaan we de coördinaten op in route. Eenmaal bij het beginvakje aangekomen
+zetten we de routeGevonden variabele op true, en stopt hij in alle functies
+met doorzoeken naar een route.*/
+void Veld::bepaalRoute(int boeket, int rij, int kolom,
                       vector< pair<int,int> > &route) 
 {
   int nieuwBoeket;
   if (rij == 0 && kolom == 0) {
+    routeGevonden = true;
     nieuwBoeket = boeket;
     switchBit(nieuwBoeket,veld[rij][kolom]);
-    if (nieuwBoeket == 0) {
-      route.push_back(make_pair(rij, kolom));
-      return true;
-    } else {
-      return false;
-    }
+    route.push_back(make_pair(rij, kolom));
   }
-  if (rij != 0) {
+  if (rij != 0 && !routeGevonden) {
     nieuwBoeket = boeket;
     switchBit(nieuwBoeket,veld[rij][kolom]);
     if (mogelijk[rij - 1][kolom][nieuwBoeket]) {
-      if (bepaalRoute(nieuwBoeket, rij - 1, kolom, route)) {
-        route.push_back(make_pair(rij, kolom));
-        return true;
-      } 
+      bepaalRoute(nieuwBoeket, rij - 1, kolom, route);
+      route.push_back(make_pair(rij, kolom));
     }
   }
-  if (kolom != 0) {
+  if (kolom != 0 && !routeGevonden) {
     nieuwBoeket = boeket;
     switchBit(nieuwBoeket,veld[rij][kolom]);
     if (mogelijk[rij][kolom - 1][nieuwBoeket]) {
-      if (bepaalRoute(nieuwBoeket, rij, kolom - 1, route)) {
-        route.push_back(make_pair(rij, kolom));
-        return true;
-      } 
+      bepaalRoute(nieuwBoeket, rij, kolom - 1, route);
+      route.push_back(make_pair(rij, kolom)); 
     }
   }
-  return false;
 }
